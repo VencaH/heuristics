@@ -1,10 +1,9 @@
 use rand_distr::num_traits::ToPrimitive;
 
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
-use crate::problem_definitions::{HasLocal, HasRandom};
 
 #[derive(Debug)]
-struct Schwefel {
+pub struct Schwefel {
     min: f32,
     max: f32,
     dim: usize,
@@ -62,7 +61,11 @@ impl Benchmark for Schwefel {
 
     fn cost_function(&self, input: &[f32]) -> f32 {
         let dimensions = self.dim.to_f32().unwrap();
-        418.9829 * dimensions - input.into_iter().map(|x| x.abs().sqrt().sin()).sum::<f32>()
+        418.9829 * dimensions
+            - input
+                .into_iter()
+                .map(|x| x * (x.abs().sqrt().sin()))
+                .sum::<f32>()
     }
 }
 
@@ -81,6 +84,8 @@ impl Default for Schwefel {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::problem_definitions::{HasLocal, HasRandom};
+
     #[test]
     fn random() {
         let schwefel = Schwefel::builder()

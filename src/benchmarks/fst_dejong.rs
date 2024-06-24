@@ -1,8 +1,7 @@
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
-use crate::problem_definitions::{HasLocal, HasRandom};
 
 #[derive(Debug)]
-struct FstDeJong {
+pub struct FstDeJong {
     min: f32,
     max: f32,
     dim: usize,
@@ -78,6 +77,8 @@ impl Default for FstDeJong {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::problem_definitions::{HasLocal, HasRandom};
+
     #[test]
     fn random() {
         let dejong = FstDeJong::builder()

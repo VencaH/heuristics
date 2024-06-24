@@ -1,5 +1,5 @@
 {
-  description = "A basic Rust devshell for NixOS users developing Leptos";
+  description = "A basic Rust devshell for NixOS users";
 
   inputs = {
     nixpkgs.url      = "github:NixOS/nixpkgs/nixos-unstable";

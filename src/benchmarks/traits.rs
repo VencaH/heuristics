@@ -5,7 +5,7 @@ use std::{
 
 use crate::problem_definitions::{HasLocal, HasRandom, ProblemDomain};
 use rand::distributions::{Distribution, Uniform};
-use rand_distr::{Distribution as DDistribution, Normal};
+use rand_distr::Normal;
 
 pub trait Benchmark {
     fn get_min(&self) -> f32;
@@ -169,21 +169,21 @@ where
         Ok(T::default()
             .set_expected_min(self.expected_min.clone())
             .set_expected_min_coords(self.expected_min_coords.clone()))
-        .and_then(|mut fd| {
+        .and_then(|fd| {
             if let Some(min) = self.min {
                 Ok(fd.set_min(min))
             } else {
                 Err(BuilderError::NoMin)
             }
         })
-        .and_then(|mut fd| {
+        .and_then(|fd| {
             if let Some(max) = self.max {
                 Ok(fd.set_max(max))
             } else {
                 Err(BuilderError::NoMax)
             }
         })
-        .and_then(|mut fd| {
+        .and_then(|fd| {
             if let Some(dim) = self.dim {
                 Ok(fd.set_dim(dim))
             } else {

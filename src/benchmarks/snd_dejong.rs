@@ -1,10 +1,9 @@
 use std::iter::zip;
 
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
-use crate::problem_definitions::{HasLocal, HasRandom};
 
 #[derive(Debug)]
-struct SndDeJong {
+pub struct SndDeJong {
     min: f32,
     max: f32,
     dim: usize,
@@ -85,6 +84,8 @@ impl Default for SndDeJong {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::problem_definitions::{HasLocal, HasRandom};
+
     #[test]
     fn random() {
         let dejong = SndDeJong::builder()
