@@ -5,14 +5,28 @@
     nixpkgs.url      = "github:NixOS/nixpkgs/nixos-unstable";
     rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url  = "github:numtide/flake-utils";
-  };
+    nix-filter.url = "github:numtide/nix-filter";
+    };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, nix-filter, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
           inherit system overlays;
+        };
+        rustHelper= pkgs.rustPlatform;
+        sources = {
+          rust = nix-filter.lib {
+            root = ./.;
+            include = [
+              ./Cargo.lock
+              (nix-filter.lib.inDirectory "src")
+              (nix-filter.lib.inDirectory "tests")
+              (nix-filter.lib.matchExt "toml")
+              (nix-filter.lib.matchExt "lock")
+            ];
+          };
         };
       in
       with pkgs;
@@ -32,8 +46,24 @@
             darwin.apple_sdk.frameworks.SystemConfiguration
           ];
 
-          shellHook = ''
+        };
+        packages = {
+          default = self.packages.${system}.test;
+
+          test = rustHelper.buildRustPackage {
+            pname = "heuristics";
+            version = "0.1.0";
+
+            src = sources.rust;
+            
+            cargoLock.lockFile  = ./Cargo.lock;
+            strictDeps = true;
+
+
+            preBuild = ''
+              cargo test
             '';
+          };
         };
       }
     );
