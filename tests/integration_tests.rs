@@ -96,3 +96,50 @@ mod local_search {
         assert!(local.get_best_cost().is_some());
     }
 }
+
+mod hill_climber {
+    use heuristics::solvers::hill_climber::HillClimber;
+
+    use super::*;
+
+    #[test]
+    fn fst_dejong() {
+        let problem = FstDeJong::builder()
+            .minimum(-5f32)
+            .maximum(5f32)
+            .dimensions(5)
+            .build()
+            .unwrap();
+        let mut hill_climber = HillClimber::new(1000, 10, problem);
+        hill_climber.run();
+
+        assert!(hill_climber.get_best_cost().is_some());
+    }
+    #[test]
+    fn snd_dejong() {
+        let problem = SndDeJong::builder()
+            .minimum(-5f32)
+            .maximum(5f32)
+            .dimensions(5)
+            .build()
+            .unwrap();
+        let mut hill_climber = HillClimber::new(1000, 10, problem);
+        hill_climber.run();
+
+        assert!(hill_climber.get_best_cost().is_some());
+    }
+    #[test]
+    fn schwefel() {
+        let problem = Schwefel::builder()
+            .minimum(-500f32)
+            .maximum(500f32)
+            .dimensions(10)
+            .build()
+            .unwrap();
+        let mut hill_climber = HillClimber::new(1000, 10, problem);
+        hill_climber.run();
+
+        println!("best: {:?}", hill_climber.get_best_cost());
+        assert!(hill_climber.get_best_cost().is_some());
+    }
+}
