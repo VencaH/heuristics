@@ -143,3 +143,50 @@ mod hill_climber {
         assert!(hill_climber.get_best_cost().is_some());
     }
 }
+
+mod simulated_annealing {
+    use heuristics::solvers::simulated_annealing::SimulatedAnnealing;
+
+    use super::*;
+
+    #[test]
+    fn fst_dejong() {
+        let problem = FstDeJong::builder()
+            .minimum(-5f32)
+            .maximum(5f32)
+            .dimensions(5)
+            .build()
+            .unwrap();
+        let mut simulated_annealing = SimulatedAnnealing::new(10, 1000f32, 0.1, 0.998, problem);
+        simulated_annealing.run();
+
+        assert!(simulated_annealing.get_best_cost().is_some());
+    }
+    #[test]
+    fn snd_dejong() {
+        let problem = SndDeJong::builder()
+            .minimum(-5f32)
+            .maximum(5f32)
+            .dimensions(5)
+            .build()
+            .unwrap();
+        let mut simulated_annealing = SimulatedAnnealing::new(10, 1000f32, 0.1, 0.998, problem);
+        simulated_annealing.run();
+
+        assert!(simulated_annealing.get_best_cost().is_some());
+    }
+    #[test]
+    fn schwefel() {
+        let problem = Schwefel::builder()
+            .minimum(-500f32)
+            .maximum(500f32)
+            .dimensions(10)
+            .build()
+            .unwrap();
+        let mut simulated_annealing = SimulatedAnnealing::new(10, 1000f32, 0.1, 0.998, problem);
+        simulated_annealing.run();
+
+        println!("best: {:?}", simulated_annealing.get_best_cost());
+        assert!(simulated_annealing.get_best_cost().is_some());
+    }
+}
