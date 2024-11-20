@@ -190,3 +190,37 @@ mod simulated_annealing {
         assert!(simulated_annealing.get_best_cost().is_some());
     }
 }
+
+mod de_rnd_1_bin {
+    use super::*;
+    use heuristics::evol_arg::de::{De, Strategy, Variant};
+
+    #[test]
+    fn fst_dejong() {
+        let problem = FstDeJong::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(20usize)
+            .build()
+            .unwrap();
+        let mut de_rnd_1_bin = De::new(Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, problem);
+        de_rnd_1_bin.run();
+        println!("best: {:?}", de_rnd_1_bin.get_best());
+        assert!(de_rnd_1_bin.get_best().is_some());
+    }
+
+    #[test]
+    fn schwefel() {
+        let problem = Schwefel::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(20usize)
+            .build()
+            .unwrap();
+        let mut de_rnd_1_bin = De::new(Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, problem);
+        de_rnd_1_bin.run();
+        println!("best: {:?}", de_rnd_1_bin.get_best());
+        assert!(de_rnd_1_bin.get_best().is_some());
+        assert_eq!(de_rnd_1_bin.get_cost_function_evaluations(), 40000);
+    }
+}
