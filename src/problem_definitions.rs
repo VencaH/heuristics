@@ -1,8 +1,16 @@
 use std::fmt::{Debug, Display};
-use std::ops::Sub;
+use std::ops::{Add, Mul, Sub};
 
 pub trait ProblemDomain {
-    type Item: PartialOrd + Clone + Debug + Display + Sub + Into<f32>;
+    type Item: PartialOrd
+        + Clone
+        + Debug
+        + Display
+        + Sub<<Self as ProblemDomain>::Item, Output = <Self as ProblemDomain>::Item>
+        + Add<<Self as ProblemDomain>::Item, Output = <Self as ProblemDomain>::Item>
+        + Mul<<Self as ProblemDomain>::Item, Output = <Self as ProblemDomain>::Item>
+        + Mul<f32, Output = f32>
+        + Into<f32>;
 
     fn get_minimum(&self) -> Self::Item;
     fn get_maximum(&self) -> Self::Item;
