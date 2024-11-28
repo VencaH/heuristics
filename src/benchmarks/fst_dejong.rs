@@ -12,6 +12,7 @@ pub struct FstDeJong {
 impl HasBuilder<FstDeJong> for FstDeJong {}
 
 impl Benchmark for FstDeJong {
+    const FUNCTION_NAME: &'static string = "1st DeJong function";
     fn get_min(&self) -> f32 {
         self.min
     }

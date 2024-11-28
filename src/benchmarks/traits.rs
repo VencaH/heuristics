@@ -8,6 +8,7 @@ use rand::distributions::{Distribution, Uniform};
 use rand_distr::Normal;
 
 pub trait Benchmark {
+    const FUNCTION_NAME: &'static string;
     fn get_min(&self) -> f32;
     fn get_max(&self) -> f32;
     fn get_dim(&self) -> usize;
