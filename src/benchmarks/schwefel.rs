@@ -14,7 +14,7 @@ pub struct Schwefel {
 impl HasBuilder<Schwefel> for Schwefel {}
 
 impl Benchmark for Schwefel {
-    const FUNCTION_NAME: &'static string = "Schwefel function";
+    const FUNCTION_NAME: &'static str = "Schwefel function";
     fn get_min(&self) -> f32 {
         self.min
     }

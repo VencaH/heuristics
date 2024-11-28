@@ -14,7 +14,7 @@ pub struct SndDeJong {
 impl HasBuilder<SndDeJong> for SndDeJong {}
 
 impl Benchmark for SndDeJong {
-    const FUNCTION_NAME: &'static string = "2nd DeJong function";
+    const FUNCTION_NAME: &'static str = "2nd DeJong function";
     fn get_min(&self) -> f32 {
         self.min
     }
