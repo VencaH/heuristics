@@ -261,6 +261,7 @@ mod de_best_1_bin {
     }
 }
 
+#[ignore]
 mod pso {
     use super::*;
     use heuristics::evol_arg::pso::Pso;

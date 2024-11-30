@@ -1,4 +1,4 @@
-use crate::{benchmarks::traits::Benchmark};
+use crate::benchmarks::traits::Benchmark;
 use plotters::prelude::*;
 
 pub struct Printer<T>
@@ -22,7 +22,7 @@ where
     T: Benchmark,
 {
     pub fn print2d(&self) {
-        let path  = format!("out/{} 2d.png", T::FUNCTION_NAME);
+        let path = format!("out/{} 2d.png", T::FUNCTION_NAME);
         let data: Vec<(f32, f32)> = (self.problem.get_min()..self.problem.get_max())
             .step(0.1)
             .values()
@@ -59,8 +59,7 @@ where
         chart
             .draw_series(LineSeries::new(data, &RED))
             .unwrap()
-            .label(T::FUNCTION_NAME)
-            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+            .label(T::FUNCTION_NAME);
 
         chart
             .configure_series_labels()
@@ -72,7 +71,7 @@ where
         drawing_area.present();
     }
 
-    pub fn print3d(&self) {
+    pub fn print3d(&self, density: f64, pitch:f64, color_th:f32) {
         let path = format!("out/{} 3d.png", T::FUNCTION_NAME);
         let data: Vec<f32> = (self.problem.get_min()..self.problem.get_max())
             .step(0.1)
@@ -104,7 +103,7 @@ where
         let drawing_area = BitMapBackend::new(&path, (640, 480)).into_drawing_area();
         drawing_area.fill(&WHITE).unwrap();
         let mut chart = ChartBuilder::on(&drawing_area)
-            .caption(T::FUNCTION_NAME, ("sans-serif", 50).into_font())
+            .caption(T::FUNCTION_NAME, ("arial", 50).into_font())
             .margin(5)
             .build_cartesian_3d(
                 self.problem.get_min()..self.problem.get_max(),
@@ -114,8 +113,9 @@ where
             .unwrap();
 
         chart.with_projection(|mut pb| {
+            pb.pitch = pitch;
             pb.yaw = 0.5;
-            pb.scale = 0.9;
+            pb.scale = 0.7;
             pb.into_matrix()
         });
 
@@ -136,11 +136,11 @@ where
                         .values(),
                     |x, z| self.problem.cost_function(&[x, z]),
                 )
-                .style(BLUE.mix(0.01).filled()),
+                // .style(BLUE.mix(density).filled()),
+                .style_func(&|&v| (VulcanoHSL::get_color(v / color_th).mix(density)).into()),
             )
             .unwrap()
-            .label(T::FUNCTION_NAME)
-            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+            .label(T::FUNCTION_NAME);
 
         chart
             .configure_series_labels()
@@ -155,11 +155,15 @@ where
 
 #[cfg(test)]
 mod test {
+    use std::{f32::consts::PI, task::Wake};
+
     use super::*;
-    use crate::benchmarks::{fst_dejong::FstDeJong,schwefel::Schwefel, traits::HasBuilder};
+    use crate::benchmarks::{
+        ackley::Ackley, alpine2::Alpine2, deb1::Deb1, foth_dejong::FothDejong, fst_dejong::FstDeJong, griewank::Griewank, michalewicz::Michalewich, periodic::Periodic, qing::Qing, quintic::Quintic, rastrigin::Rastrigin, salomon::Salomon, schwefel::Schwefel, styblinsky_and_tang::StyblinskyAndTang, traits::HasBuilder, trd_dejong::TrdDejong, xinsheyang::XinSheYang
+    };
 
     #[test]
-    fn print_test_graph() {
+    fn fstdejong() {
         let problem = FstDeJong::builder()
             .minimum(-100f32)
             .maximum(100f32)
@@ -168,8 +172,11 @@ mod test {
             .unwrap();
         let printer = Printer::new(problem);
         printer.print2d();
-        printer.print3d();
+        printer.print3d(0.01,1.0,15.0);
+    }
 
+    #[test]
+    fn schwefel() {
         let schwefel = Schwefel::builder()
             .minimum(-100f32)
             .maximum(100f32)
@@ -178,6 +185,251 @@ mod test {
             .unwrap();
         let sch_printer = Printer::new(schwefel);
         sch_printer.print2d();
-        sch_printer.print3d();
+        sch_printer.print3d(0.01,1.0,15.0);
+    }
+
+    #[test]
+    fn michalewicz() {
+        let mut michalewicz = Michalewich::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap()
+            .set_m(10);
+        let mich_printer = Printer::new(michalewicz);
+        mich_printer.print2d();
+        mich_printer.print3d(0.01,1.0,15.0);
+    }
+
+    #[test]
+    fn rastrigin() {
+        // pitch 1.0
+        let mut rastrigin = Rastrigin::builder()
+            .minimum(-4f32)
+            .maximum(4f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let ras_printer = Printer::new(rastrigin);
+        ras_printer.print2d();
+        ras_printer.print3d(0.15,1.0,15.0);
+    }
+
+    #[ignore]
+    #[test]
+    fn trd_dejong() {
+        // pitch 1.0
+        let mut trd_dejong = TrdDejong::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(trd_dejong);
+        printer.print2d();
+        printer.print3d(0.05,1.0,15.0);
+    }
+
+    #[test]
+    fn trd_dejong_zoom1() {
+        // pitch 1.0
+        let mut trd_dejong = TrdDejong::builder()
+            .minimum(-4f32)
+            .maximum(4f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(trd_dejong);
+        printer.print2d();
+        printer.print3d(0.8,1.0,30.0);
+    }
+
+    #[test]
+    fn griewank_zoom1() {
+        // pitch 1.0
+        let mut problem = Griewank::builder()
+            .minimum(-10f32)
+            .maximum(10f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.15,1.0,15.0);
+    }
+
+    #[ignore]
+    #[test]
+    fn griewank() {
+        // pitch 1.0
+        let mut problem = Griewank::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.15,1.0,15.0);
+    }
+
+    #[test]
+    fn styblinsky_and_tang() {
+        // pitch 1.0
+        let mut problem = StyblinskyAndTang::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.15,1.0,15.0);
+    }
+
+    #[test]
+    fn styblinsky_and_tang_zoom1() {
+        // pitch 1.0
+        let mut problem = StyblinskyAndTang::builder()
+            .minimum(-5f32)
+            .maximum(5f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.20,1.0,15.0);
+    }
+
+    #[test]
+    fn ackley() {
+        // pitch 0.5
+        let mut problem = Ackley::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap()
+            .set_a(20)
+            .set_b(0.2)
+            .set_c(2f32 * PI);
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.01,0.5,15.0);
+    }
+
+    #[test]
+    fn alpine2() {
+        // pitch 1.0
+        let mut problem = Alpine2::builder()
+            .minimum(0f32)
+            .maximum(10f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.1,1.0,15.0);
+    }
+
+    #[test]
+    fn foth_dejong() {
+        // pitch 1.0
+        let mut problem = FothDejong::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.01,1.0,15.0);
+    }
+
+    #[test]
+    fn salomon() {
+        // pitch 1.0
+        let mut problem = Salomon::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.15,1.0,15.0);
+    }
+
+    #[test]
+    fn periodic() {
+        // pitch 1.0
+        let mut problem = Periodic::builder()
+            .minimum(-10f32)
+            .maximum(10f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.3,0.5,5.0);
+    }
+
+    #[test]
+    fn xin_she_yang() {
+        // pitch 1.0
+        // slow
+        let mut problem = XinSheYang::builder()
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.15,1.0,15.0);
+    }
+
+     #[test]
+    fn qing() {
+        // pitch 1.0
+        let mut problem = Qing::builder()
+            .minimum(-2f32)
+            .maximum(2f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.8,1.0,15.0);
+    }
+
+     #[test]
+    fn deb1() {
+        // pitch 1.0
+        // slow
+        let mut problem = Deb1::builder()
+            .minimum(-1f32)
+            .maximum(1f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.8,1.0,500.0);
+    }
+
+     #[test]
+    fn quintic() {
+        // pitch 1.0
+        let mut problem = Quintic::builder()
+            .minimum(-10f32)
+            .maximum(10f32)
+            .dimensions(2)
+            .build()
+            .unwrap();
+        let printer = Printer::new(problem);
+        printer.print2d();
+        printer.print3d(0.8, 1.0,300.0);
     }
 }
