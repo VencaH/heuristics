@@ -103,7 +103,7 @@ impl Benchmark for Ackley {
             .mul(
                 (-self.b.mul(
                     input
-                        .into_iter()
+                        .iter()
                         .map(|x| x.powi(2))
                         .sum::<f32>()
                         .mul(1f32.div(d))
@@ -113,7 +113,7 @@ impl Benchmark for Ackley {
             )
             .sub(
                 input
-                    .into_iter()
+                    .iter()
                     .map(|x| self.c.mul(x).cos())
                     .sum::<f32>()
                     .mul(1f32.div(d))

@@ -68,7 +68,7 @@ impl Benchmark for TrdDejong {
 
     fn cost_function(&self, input: &[f32]) -> f32 {
         let dimensions = self.dim.to_f32().unwrap();
-        10f32 * dimensions + input.into_iter().map(|x| x.floor()).sum::<f32>()
+        10f32 * dimensions + input.iter().map(|x| x.floor()).sum::<f32>()
     }
 }
 

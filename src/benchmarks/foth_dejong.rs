@@ -69,7 +69,7 @@ impl Benchmark for FothDejong {
 
     fn cost_function(&self, input: &[f32]) -> f32 {
         input
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(i, x)| (i as f32).add(1f32).mul(x.powi(4)).add(random::<f32>().mul(10000000f32)))
             .sum::<f32>()

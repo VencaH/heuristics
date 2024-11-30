@@ -59,7 +59,7 @@ impl Benchmark for FstDeJong {
     }
 
     fn cost_function(&self, input: &[f32]) -> f32 {
-        input.into_iter().map(|x| x * *x).sum()
+        input.iter().map(|x| x * *x).sum()
     }
 }
 

@@ -67,7 +67,7 @@ impl Benchmark for Rastrigin {
         let dimensions = self.dim.to_f32().unwrap();
         10f32 * dimensions
             + input
-                .into_iter()
+                .iter()
                 .map(|x| 
                     x.powi(2)
                     .sub(

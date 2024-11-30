@@ -1,7 +1,6 @@
-use std::{
-    f32::consts::PI,
-    ops::{Div, Mul, Sub},
-};
+use std::
+    ops::Div
+;
 
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
 use rand_distr::num_traits::{Float, ToPrimitive};
@@ -67,8 +66,8 @@ impl Benchmark for Griewank {
     }
 
     fn cost_function(&self, input: &[f32]) -> f32 {
-       1f32 + input.into_iter().map(|x| x.powi(2).div(4000f32)).sum::<f32>()
-            - input.into_iter().enumerate().map(|(i,x)| x.div(
+       1f32 + input.iter().map(|x| x.powi(2).div(4000f32)).sum::<f32>()
+            - input.iter().enumerate().map(|(i,x)| x.div(
                         (i as f32 + 1f32)
                         .sqrt()
                     )

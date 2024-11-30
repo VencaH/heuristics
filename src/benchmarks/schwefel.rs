@@ -64,7 +64,7 @@ impl Benchmark for Schwefel {
         let dimensions = self.dim.to_f32().unwrap();
         418.9829 * dimensions
             - input
-                .into_iter()
+                .iter()
                 .map(|x| x * (x.abs().sqrt().sin()))
                 .sum::<f32>()
     }

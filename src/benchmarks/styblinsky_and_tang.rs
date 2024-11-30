@@ -67,7 +67,7 @@ impl Benchmark for StyblinskyAndTang {
     }
 
     fn cost_function(&self, input: &[f32]) -> f32 {
-      0.5 * input.into_iter().map(|x| 
+      0.5 * input.iter().map(|x| 
           x.powi(4)
           .sub(
               16f32.mul(x.powi(2))

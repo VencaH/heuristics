@@ -77,7 +77,7 @@ impl Benchmark for Michalewich {
     fn cost_function(&self, input: &[f32]) -> f32 {
         println!("inputs: {:?}", input);
         let result =-input
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(i, x)| {
                 x.sin()
@@ -89,9 +89,6 @@ impl Benchmark for Michalewich {
                         .sin()
                         .powi(self.m *2)
                         )
-      //              * ((i as f32 + 1f32) * x.powi(2) / PI)
-      //                  .sin()
-      //                  .powi(self.m * 2)
             })
             .sum::<f32>();
         println!("{result}");
