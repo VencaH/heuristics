@@ -192,7 +192,7 @@ where
             .collect::<Vec<Member<T>>>();
         let mut selected_vectors = current_gen.choose_multiple(&mut rand::thread_rng(), 3);
 
-        let trial_vector = selected_vectors
+        let trial_vector = self.reflect(selected_vectors
             .next()
             .unwrap()
             .coordinates
@@ -219,7 +219,7 @@ where
                     a
                 }
             })
-            .collect::<Vec<T::Item>>();
+            .collect::<Vec<T::Item>>());
         let cost = self.run_cost_fn(&trial_vector).into();
         if cost < member.cost {
             Member {
@@ -229,6 +229,18 @@ where
         } else {
             member.to_owned()
         }
+    }
+
+    fn reflect(&self, vec: Vec<f32>) -> Vec<f32> {
+        let min = self.problem.get_minimum();
+        let max = self.problem.get_maximum();
+        vec.iter()
+            .map(|&x| match (x < min, x > max) {
+                (true, _) => min + (min - x),
+                (_, true) => max + (x - max),
+                (false, false) => x,
+            })
+            .collect::<Vec<f32>>()
     }
 }
 
@@ -261,6 +273,8 @@ mod test {
         let expected_calls = 5000;
         let mut mocked_problem = MockProblem::new();
         mocked_problem.expect_get_dimensions().returning(|| 3usize);
+        mocked_problem.expect_get_minimum().returning(|| 3f32);
+        mocked_problem.expect_get_maximum().returning(|| 300f32);
         mocked_problem
             .expect_get_random()
             .times(10)
@@ -286,7 +300,10 @@ mod test {
         );
         de_rng_1_bin.run();
         assert!(de_rng_1_bin.current_best.is_some());
-        assert_eq!(de_rng_1_bin.cost_function_evaluations, expected_calls as i32);
+        assert_eq!(
+            de_rng_1_bin.cost_function_evaluations,
+            expected_calls as i32
+        );
         assert_eq!(de_rng_1_bin.generations_history.len(), 500);
         assert_eq!(de_rng_1_bin.generations_history[0].len(), 10);
     }

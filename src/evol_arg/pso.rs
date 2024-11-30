@@ -212,14 +212,26 @@ where
             .zip(personal_velocity)
             .map(|(a, b)| a + b)
             .collect();
-        let new_coords: Vec<T::Item> = particle.coordinates_history[particle.current_coordinates]
+        let new_coords: Vec<T::Item> = self.reflect(particle.coordinates_history[particle.current_coordinates]
             .iter()
             .zip(new_velocity.iter())
             .map(|(a, b)| a + b)
-            .collect();
+            .collect());
         let new_cost = self.run_cost_fn(&new_coords);
         particle.update_particle(new_coords, new_velocity, new_cost);
         particle
+    }
+
+    fn reflect(&self, vec: Vec<f32>) -> Vec<f32> {
+        let min = self.problem.get_minimum();
+        let max = self.problem.get_maximum();
+        vec.iter()
+            .map(|&x| match (x < min, x > max) {
+                (true, _) => min + (min - x),
+                (_, true) => max + (x - max),
+                (false, false) => x,
+            })
+            .collect::<Vec<f32>>()
     }
 }
 
@@ -252,6 +264,8 @@ mod test {
         let expected_calls = 500;
         let mut mocked_problem = MockProblem::new();
         mocked_problem.expect_get_dimensions().returning(|| 3usize);
+        mocked_problem.expect_get_minimum().returning(|| 3f32);
+        mocked_problem.expect_get_maximum().returning(|| 300f32);
         mocked_problem
             .expect_get_random()
             .times(20) // in pso twice per particle during inicialization
