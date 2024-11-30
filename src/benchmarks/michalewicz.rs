@@ -1,11 +1,10 @@
 use std::{f32::consts::PI, ops::{Add, Div, Mul}};
-use rand_distr::num_traits::ToPrimitive;
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
 
 // source:https://www.sfu.ca/~ssurjano/michal.html
 
 #[derive(Debug)]
-pub struct Michalewich {
+pub struct Michalewicz {
     min: f32,
     max: f32,
     dim: usize,
@@ -14,7 +13,7 @@ pub struct Michalewich {
     expected_min_coords: Option<Vec<f32>>,
 }
 
-impl Michalewich {
+impl Michalewicz {
     pub fn get_m(&self) -> i32 {
         self.m
     }
@@ -25,10 +24,10 @@ impl Michalewich {
     }
 }
 
-impl HasBuilder<Michalewich> for Michalewich {}
+impl HasBuilder<Michalewicz> for Michalewicz {}
 
-impl Benchmark for Michalewich {
-    const FUNCTION_NAME: &'static str = "Michalewich function";
+impl Benchmark for Michalewicz {
+    const FUNCTION_NAME: &'static str = "Michalewicz function";
     fn get_min(&self) -> f32 {
         self.min
     }
@@ -96,7 +95,7 @@ impl Benchmark for Michalewich {
     }
 }
 
-impl Default for Michalewich {
+impl Default for Michalewicz {
     fn default() -> Self {
         Self {
             min: 0f32,
@@ -116,15 +115,15 @@ mod test {
 
     #[test]
     fn random() {
-        let michalewich = Michalewich::builder()
+        let michalewicz = Michalewicz::builder()
             .minimum(-500f32)
             .maximum(500f32)
             .dimensions(5usize)
             .build()
             .unwrap();
-        let random_1 = michalewich.get_random();
-        let random_2 = michalewich.get_random();
-        let random_3 = michalewich.get_random();
+        let random_1 = michalewicz.get_random();
+        let random_2 = michalewicz.get_random();
+        let random_3 = michalewicz.get_random();
 
         assert_ne!(random_1, random_2);
         assert_ne!(random_1, random_3);
@@ -133,7 +132,7 @@ mod test {
 
     #[test]
     fn radom_in_range() {
-        let dejong = Michalewich::builder()
+        let dejong = Michalewicz::builder()
             .minimum(-500f32)
             .maximum(500f32)
             .dimensions(5usize)
@@ -150,14 +149,14 @@ mod test {
 
     #[test]
     fn local_next() {
-        let michalewich = Michalewich::builder()
+        let michalewicz = Michalewicz::builder()
             .minimum(-500f32)
             .maximum(500f32)
             .dimensions(5usize)
             .build()
             .unwrap();
-        let random_1 = michalewich.get_random();
-        let new_local = michalewich.get_local_next(&random_1);
+        let random_1 = michalewicz.get_random();
+        let new_local = michalewicz.get_local_next(&random_1);
 
         assert!(!new_local.is_empty());
         assert_ne!(new_local, random_1);
@@ -165,16 +164,16 @@ mod test {
 
     #[test]
     fn local_next_in_range() {
-        let michalewich = Michalewich::builder()
+        let michalewicz = Michalewicz::builder()
             .minimum(-500f32)
             .maximum(500f32)
             .dimensions(5usize)
             .build()
             .unwrap();
-        let random_1 = michalewich.get_random();
-        let new_local = michalewich.get_local_next(&random_1);
-        let new_low = michalewich.get_local_next(&vec![-500.0, -500.0, -500.0, -500.0, -500.0]);
-        let new_high = michalewich.get_local_next(&vec![500.0, 500.0, 500.0, 500.0, 500.0]);
+        let random_1 = michalewicz.get_random();
+        let new_local = michalewicz.get_local_next(&random_1);
+        let new_low = michalewicz.get_local_next(&vec![-500.0, -500.0, -500.0, -500.0, -500.0]);
+        let new_high = michalewicz.get_local_next(&vec![500.0, 500.0, 500.0, 500.0, 500.0]);
 
         assert!(new_local.into_iter().all(|x| x > -500f32 && x < 500f32));
         assert!(new_low.into_iter().all(|x| x > -500f32 && x < 500f32));

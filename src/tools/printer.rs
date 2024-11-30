@@ -23,6 +23,7 @@ where
 {
     pub fn print2d(&self) {
         let path = format!("out/{} 2d.png", T::FUNCTION_NAME);
+        let title = format!("{} 2D", T::FUNCTION_NAME);
         let data: Vec<(f32, f32)> = (self.problem.get_min()..self.problem.get_max())
             .step(0.1)
             .values()
@@ -42,10 +43,10 @@ where
             .max_by(|a, b| a.total_cmp(b))
             .unwrap()
             .to_owned();
-        let drawing_area = BitMapBackend::new(&path, (640, 480)).into_drawing_area();
+        let drawing_area = BitMapBackend::new(&path, (700, 480)).into_drawing_area();
         drawing_area.fill(&WHITE).unwrap();
         let mut chart = ChartBuilder::on(&drawing_area)
-            .caption(T::FUNCTION_NAME, ("sans-serif", 50).into_font())
+            .caption(title, ("arial", 50).into_font())
             .margin(5)
             .x_label_area_size(30)
             .y_label_area_size(30)
@@ -60,18 +61,12 @@ where
             .draw_series(LineSeries::new(data, &RED))
             .unwrap();
 
-        //chart
-            //.configure_series_labels()
-            //.background_style(&WHITE.mix(0.8))
-            // .border_style(&BLACK)
-            //.draw()
-            //.unwrap();
-
-        drawing_area.present();
+        let _ = drawing_area.present();
     }
 
     pub fn print3d(&self, density: f64, pitch:f64, color_th:f32) {
         let path = format!("out/{} 3d.png", T::FUNCTION_NAME);
+        let title = format!("{} 3D", T::FUNCTION_NAME);
         let data: Vec<f32> = (self.problem.get_min()..self.problem.get_max())
             .step(0.1)
             .values()
@@ -102,7 +97,7 @@ where
         let drawing_area = BitMapBackend::new(&path, (640, 480)).into_drawing_area();
         drawing_area.fill(&WHITE).unwrap();
         let mut chart = ChartBuilder::on(&drawing_area)
-            .caption(T::FUNCTION_NAME, ("arial", 50).into_font())
+            .caption(title, ("arial", 50).into_font())
             .margin(5)
             .build_cartesian_3d(
                 self.problem.get_min()..self.problem.get_max(),
@@ -140,14 +135,7 @@ where
             )
             .unwrap();
 
-        //chart
-            //.configure_series_labels()
-            //.background_style(&WHITE.mix(0.8))
-            // .border_style(&BLACK)
-            //.draw()
-            //.unwrap();
-
-        drawing_area.present();
+        let _ = drawing_area.present();
     }
 }
 
@@ -157,7 +145,7 @@ mod test {
 
     use super::*;
     use crate::benchmarks::{
-        ackley::Ackley, alpine2::Alpine2, deb1::Deb1, foth_dejong::FothDejong, fst_dejong::FstDeJong, griewank::Griewank, michalewicz::Michalewich, periodic::Periodic, qing::Qing, quintic::Quintic, rastrigin::Rastrigin, salomon::Salomon, schwefel::Schwefel, styblinsky_and_tang::StyblinskyAndTang, traits::HasBuilder, trd_dejong::TrdDejong, xinsheyang::XinSheYang
+        ackley::Ackley, alpine2::Alpine2, deb1::Deb1, foth_dejong::FothDejong, fst_dejong::FstDeJong, griewank::Griewank, michalewicz::Michalewicz, periodic::Periodic, qing::Qing, quintic::Quintic, rastrigin::Rastrigin, salomon::Salomon, schwefel::Schwefel, styblinsky_and_tang::StyblinskyAndTang, traits::HasBuilder, trd_dejong::TrdDejong, xinsheyang::XinSheYang
     };
 
     #[test]
@@ -188,7 +176,7 @@ mod test {
 
     #[test]
     fn michalewicz() {
-        let michalewicz = Michalewich::builder()
+        let michalewicz = Michalewicz::builder()
             .minimum(-100f32)
             .maximum(100f32)
             .dimensions(2)
@@ -343,7 +331,7 @@ mod test {
             .unwrap();
         let printer = Printer::new(problem);
         printer.print2d();
-        printer.print3d(0.05,1.0,15000000.0);
+        printer.print3d(0.05,1.0,150000000.0);
     }
 
     #[test]

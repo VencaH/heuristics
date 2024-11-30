@@ -80,7 +80,7 @@ impl Benchmark for Salomon {
             )
             .add(
                 input
-                    .into_iter()
+                    .iter()
                     .map(|x| x.powi(2))
                     .sum::<f32>()
                     .sqrt()

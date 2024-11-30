@@ -21,7 +21,7 @@ pub struct FothDejong {
 impl HasBuilder<FothDejong> for FothDejong {}
 
 impl Benchmark for FothDejong {
-    const FUNCTION_NAME: &'static str = "4rd De Jong function with noise";
+    const FUNCTION_NAME: &'static str = "4th De Jong function with noise";
     fn get_min(&self) -> f32 {
         self.min
     }

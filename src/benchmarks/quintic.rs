@@ -1,13 +1,10 @@
 use std::{
-    f32::consts::{E, PI},
-    ops::{Add, Div, Mul, Sub},
+    ops::{Add, Mul, Sub},
 };
 
 use crate::benchmarks::traits::{Benchmark, HasBuilder};
-use rand::random;
-use rand_distr::num_traits::{Float, ToPrimitive};
 
-// source:  https://al-roomi.org/benchmarks/unconstrained/n-dimensions/231-deb-s-function-no-01
+// source:  https://al-roomi.org/benchmarks/unconstrained/n-dimensions/240-quintic-function
 //
 #[derive(Debug)]
 pub struct Quintic {
