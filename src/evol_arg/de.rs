@@ -53,7 +53,7 @@ where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
     // DE parameters
-    max_generations: i32,
+    max_cf: i32,
     population_size: usize,
     scaling_factor: T::Item,
     crossover_probability: f32,
@@ -78,14 +78,14 @@ where
         variant: Variant,
         difference_vectors: i32,
         strategy: Strategy,
-        max_generations: i32,
+        max_cf: i32,
         population_size: usize,
         scaling_factor: f32,
         crossover_probability: f32,
         problem: T,
     ) -> Self {
         Self {
-            max_generations,
+            max_cf,
             population_size,
             scaling_factor,
             crossover_probability,
@@ -104,7 +104,7 @@ where
         let new_gen = self.get_random_generation();
         self.add_new_generation(new_gen);
         self.update_best();
-        for _ in 1..self.max_generations {
+        while self.cost_function_evaluations < self.max_cf {
             let new_generation = self.generations_history[self.current_generation]
                 .clone()
                 .into_iter()
@@ -278,7 +278,7 @@ mod test {
             Variant::Rnd,
             1,
             Strategy::Bin,
-            500,
+            5000,
             10,
             0.8,
             0.5,
@@ -286,7 +286,7 @@ mod test {
         );
         de_rng_1_bin.run();
         assert!(de_rng_1_bin.current_best.is_some());
-        assert_eq!(de_rng_1_bin.cost_function_evaluations, 5000);
+        assert_eq!(de_rng_1_bin.cost_function_evaluations, expected_calls as i32);
         assert_eq!(de_rng_1_bin.generations_history.len(), 500);
         assert_eq!(de_rng_1_bin.generations_history[0].len(), 10);
     }

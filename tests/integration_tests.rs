@@ -221,7 +221,7 @@ mod de_rnd_1_bin {
         de_rnd_1_bin.run();
         println!("best: {:?}", de_rnd_1_bin.get_best());
         assert!(de_rnd_1_bin.get_best().is_some());
-        assert_eq!(de_rnd_1_bin.get_cost_function_evaluations(), 40000);
+        assert_eq!(de_rnd_1_bin.get_cost_function_evaluations(), 4000);
     }
 }
 
@@ -257,7 +257,7 @@ mod de_best_1_bin {
         de_best_1_bin.run();
         println!("best: {:?}", de_best_1_bin.get_best());
         assert!(de_best_1_bin.get_best().is_some());
-        assert_eq!(de_best_1_bin.get_cost_function_evaluations(), 40000);
+        assert_eq!(de_best_1_bin.get_cost_function_evaluations(), 4000);
     }
 }
 
@@ -292,6 +292,6 @@ mod pso {
         pso.run();
         println!("best: {:?}", pso.get_best());
         assert!(pso.get_best().is_some());
-        assert_eq!(pso.get_cost_function_evaluations(), 40000);
+        assert_eq!(pso.get_cost_function_evaluations(), 4000);
     }
 }

@@ -65,7 +65,7 @@ pub struct Pso<T>
 where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
-    max_iterations: i32,
+    max_cf: i32,
     population_size: usize,
     inertia_weight: f32,
     personal_priority: f32,
@@ -84,7 +84,7 @@ where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
     pub fn new(
-        max_iterations: i32,
+        max_cf: i32,
         population_size: usize,
         inertia_weight: f32,
         personal_priority: f32,
@@ -92,7 +92,7 @@ where
         problem: T,
     ) -> Self {
         Self {
-            max_iterations,
+            max_cf,
             population_size,
             inertia_weight,
             personal_priority,
@@ -119,7 +119,7 @@ where
         self.particles = new_pop.clone();
         self.update_best();
 
-        for _ in 1..self.max_iterations {
+        while self.cost_function_evaluations < self.max_cf {
             self.particles = self
                 .particles
                 .clone()
@@ -249,7 +249,7 @@ mod test {
 
     #[test]
     fn expected_cost_calls() {
-        let expected_calls = 5000;
+        let expected_calls = 500;
         let mut mocked_problem = MockProblem::new();
         mocked_problem.expect_get_dimensions().returning(|| 3usize);
         mocked_problem
@@ -268,6 +268,6 @@ mod test {
         let mut pso = Pso::new(500, 10, 0.7, 0.8, 0.9, mocked_problem);
         pso.run();
         assert!(pso.current_best_coordinates.is_some());
-        assert_eq!(pso.cost_function_evaluations, 5000);
+        assert_eq!(pso.cost_function_evaluations, expected_calls as i32);
     }
 }

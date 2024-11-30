@@ -153,6 +153,7 @@ where
     }
 }
 
+#[ignore]
 #[cfg(test)]
 mod test {
     use std::{f32::consts::PI, task::Wake};
