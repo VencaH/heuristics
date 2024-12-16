@@ -148,6 +148,7 @@ mod test {
         ackley::Ackley, alpine2::Alpine2, deb1::Deb1, foth_dejong::FothDejong, fst_dejong::FstDeJong, griewank::Griewank, michalewicz::Michalewicz, periodic::Periodic, qing::Qing, quintic::Quintic, rastrigin::Rastrigin, salomon::Salomon, schwefel::Schwefel, styblinsky_and_tang::StyblinskyAndTang, traits::HasBuilder, trd_dejong::TrdDejong, xinsheyang::XinSheYang
     };
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn fstdejong() {
         let problem = FstDeJong::builder()
@@ -161,6 +162,7 @@ mod test {
         printer.print3d(0.01,1.0,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn schwefel() {
         let schwefel = Schwefel::builder()
@@ -174,6 +176,7 @@ mod test {
         sch_printer.print3d(0.05,1.0,480.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn michalewicz() {
         let michalewicz = Michalewicz::builder()
@@ -188,6 +191,7 @@ mod test {
         mich_printer.print3d(0.05,0.5,0.1);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn rastrigin() {
         // pitch 1.0
@@ -217,6 +221,7 @@ mod test {
         printer.print3d(0.05,1.0,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn trd_dejong_zoom1() {
         // pitch 1.0
@@ -231,6 +236,7 @@ mod test {
         printer.print3d(0.8,1.0,30.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn griewank_zoom1() {
         // pitch 1.0
@@ -275,6 +281,7 @@ mod test {
         printer.print3d(0.15,1.0,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn styblinsky_and_tang_zoom1() {
         // pitch 1.0
@@ -289,6 +296,7 @@ mod test {
         printer.print3d(0.50,1.0,30.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn ackley() {
         // pitch 0.5
@@ -306,6 +314,7 @@ mod test {
         printer.print3d(0.05,0.5,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn alpine2() {
         // pitch 1.0
@@ -320,6 +329,7 @@ mod test {
         printer.print3d(0.5,1.0,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn foth_dejong() {
         // pitch 1.0
@@ -334,6 +344,7 @@ mod test {
         printer.print3d(0.05,1.0,150000000.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn salomon() {
         // pitch 1.0
@@ -348,6 +359,7 @@ mod test {
         printer.print3d(0.15,1.0,15.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn periodic() {
         // pitch 1.0
@@ -362,6 +374,7 @@ mod test {
         printer.print3d(0.3,0.5,5.0);
     }
 
+    #[ignore = "ignore more computation heavy tests"]
     #[test]
     fn xin_she_yang() {
         // pitch 1.0
@@ -377,7 +390,8 @@ mod test {
         printer.print3d(0.15,1.0,15.0);
     }
 
-     #[test]
+    #[ignore = "ignore more computation heavy tests"]
+    #[test]
     fn qing() {
         // pitch 1.0
         let problem = Qing::builder()
@@ -391,7 +405,8 @@ mod test {
         printer.print3d(0.8,1.0,15.0);
     }
 
-     #[test]
+    #[ignore = "ignore more computation heavy tests"]
+    #[test]
     fn deb1() {
         // pitch 1.0
         // slow
@@ -406,7 +421,8 @@ mod test {
         printer.print3d(0.8,1.0,0.01);
     }
 
-     #[test]
+    #[ignore = "ignore more computation heavy tests"]
+    #[test]
     fn quintic() {
         // pitch 1.0
         let problem = Quintic::builder()
