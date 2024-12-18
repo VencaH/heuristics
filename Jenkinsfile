@@ -12,7 +12,7 @@ pipeline {
         stage('Test code') {
             steps{
                 script {
-                    def tests = sh(script: "cargo test", returnStdout: true ).tokenize("\n").findAll{line -> (line =~ /error$|result:/)}
+                    def tests = sh(script: "nix run ./#test", returnStdout: true ).tokenize("\n").findAll{line -> (line =~ /error$|result:/)}
                     tests.each { test -> echo "Tests: ${test}" }
                 }
             }
