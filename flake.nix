@@ -52,6 +52,14 @@
           default = self.packages.${system}.test;
 
           test = rustHelper.buildRustPackage {
+	    buildInputs =[
+	      openssl
+	      pkg-config
+	      cacert
+	      cargo-make
+	      trunk
+	      fontconfig
+            ];
             pname = "heuristics";
             version = "0.1.0";
 
