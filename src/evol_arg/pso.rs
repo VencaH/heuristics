@@ -61,7 +61,7 @@ where
     }
 }
 
-pub struct Pso<T>
+pub struct Pso<'a, T>
 where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
@@ -76,10 +76,10 @@ where
     particles: Vec<Particle<T>>,
     cost_function_evaluations: i32,
 
-    problem: T,
+    problem: &'a T,
 }
 
-impl<T> Pso<T>
+impl<'a, T> Pso<'a, T>
 where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
@@ -89,7 +89,7 @@ where
         inertia_weight: f32,
         personal_priority: f32,
         social_priority: f32,
-        problem: T,
+        problem: &'a T,
     ) -> Self {
         Self {
             max_cf,
@@ -205,7 +205,7 @@ where
                     .map(|_| random::<f32>()),
             )
             .map(|(a, b)| a * b)
-            .map(|a| a * self.personal_priority);
+            .map(|a| a * self.social_priority);
         let new_velocity: Vec<f32> = weighted_velocity
             .zip(social_velocity)
             .map(|(a, b)| a + b)
@@ -226,12 +226,17 @@ where
         let min = self.problem.get_minimum();
         let max = self.problem.get_maximum();
         vec.iter()
-            .map(|&x| match (x < min, x > max) {
-                (true, _) => min + (min - x),
-                (_, true) => max + (x - max),
-                (false, false) => x,
-            })
+            .map(|&x| self.reflect_number(x, min, max) 
+            )
             .collect::<Vec<f32>>()
+    }
+
+    fn reflect_number(&self, x: f32, min: f32, max: f32) -> f32 {
+        match (x < min, x > max) {
+            (true, _) => self.reflect_number(min + (min - x), min, max),
+            (_, true) => self.reflect_number(max - (x - max), min, max),
+            (false, false) => x
+        }
     }
 }
 
@@ -279,9 +284,34 @@ mod test {
                 range.sample(&mut rng)
             });
 
-        let mut pso = Pso::new(500, 10, 0.7, 0.8, 0.9, mocked_problem);
+        let mut pso = Pso::new(500, 10, 0.7, 0.8, 0.9, &mocked_problem);
         pso.run();
         assert!(pso.current_best_coordinates.is_some());
         assert_eq!(pso.cost_function_evaluations, expected_calls as i32);
+    }
+
+    #[test]
+    fn reflect_vector() {
+        let mut mocked_problem = MockProblem::new();
+        mocked_problem.expect_get_minimum().returning(|| -100f32);
+        mocked_problem.expect_get_maximum().returning(|| 100f32);
+
+        let mut evo = Pso::new(20000, 100, 0.9, 0.7,0.5, &mocked_problem);        //test both outside
+        let vec = vec![-134.12,123.00];
+        let expected = vec![-65.88, 77.00];
+        let reflected = evo.reflect(vec);
+        let _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
+
+        //test extremely under
+        let vec = vec![-934.12,23.00];
+        let expected = vec![-65.88, 23.00];
+        let reflected = evo.reflect(vec);
+        let  _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
+
+        //test extremely over
+        let vec = vec![-34.12,1123.00];
+        let expected = vec![-34.12, 77.00];
+        let reflected = evo.reflect(vec);
+        let  _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
     }
 }

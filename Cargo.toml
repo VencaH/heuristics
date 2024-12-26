@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+approx = "0.5.1"
 mockall = "0.12.1"
 plotters = "0.3.7"
 rand = "0.8.5"

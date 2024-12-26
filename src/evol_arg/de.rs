@@ -48,7 +48,7 @@ where
     }
 }
 
-pub struct De<T>
+pub struct De<'a, T>
 where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
@@ -58,7 +58,7 @@ where
     scaling_factor: T::Item,
     crossover_probability: f32,
     difference_vectors: i32,
-    variant: Variant,
+    variant: &'a Variant,
     strategy: Strategy,
 
     // results
@@ -67,22 +67,22 @@ where
     current_generation: usize,
     cost_function_evaluations: i32,
 
-    problem: T,
+    problem: &'a T,
 }
 
-impl<T> De<T>
+impl<'a, T> De<'a, T>
 where
     T: ProblemDomain<Item = f32> + HasRandom,
 {
     pub fn new(
-        variant: Variant,
+        variant: &'a Variant,
         difference_vectors: i32,
         strategy: Strategy,
         max_cf: i32,
         population_size: usize,
         scaling_factor: f32,
         crossover_probability: f32,
-        problem: T,
+        problem: &'a T,
     ) -> Self {
         Self {
             max_cf,
@@ -183,7 +183,7 @@ where
         if self.difference_vectors != 1 {
             todo!()
         }
-        let mut current_gen = self
+        let current_gen = self
             .get_current_generation()
             .iter()
             .enumerate()
@@ -235,12 +235,17 @@ where
         let min = self.problem.get_minimum();
         let max = self.problem.get_maximum();
         vec.iter()
-            .map(|&x| match (x < min, x > max) {
-                (true, _) => min + (min - x),
-                (_, true) => max + (x - max),
-                (false, false) => x,
-            })
+            .map(|&x| self.reflect_number(x, min, max) 
+            )
             .collect::<Vec<f32>>()
+    }
+
+    fn reflect_number(&self, x: f32, min: f32, max: f32) -> f32 {
+        match (x < min, x > max) {
+            (true, _) => self.reflect_number(min + (min - x), min, max),
+            (_, true) => self.reflect_number(max - (x - max), min, max),
+            (false, false) => x
+        }
     }
 }
 
@@ -252,6 +257,7 @@ mod test {
     use mockall::*;
     use rand::distributions::Uniform;
     use rand_distr::Distribution;
+    use approx::relative_eq;
 
     mock! {
         Problem {}
@@ -289,14 +295,14 @@ mod test {
             });
 
         let mut de_rng_1_bin = De::new(
-            Variant::Rnd,
+            &Variant::Rnd,
             1,
             Strategy::Bin,
             5000,
             10,
             0.8,
             0.5,
-            mocked_problem,
+            &mocked_problem,
         );
         de_rng_1_bin.run();
         assert!(de_rng_1_bin.current_best.is_some());
@@ -306,5 +312,32 @@ mod test {
         );
         assert_eq!(de_rng_1_bin.generations_history.len(), 500);
         assert_eq!(de_rng_1_bin.generations_history[0].len(), 10);
+    }
+
+    #[test]
+    fn reflect_vector() {
+        let mut mocked_problem = MockProblem::new();
+        mocked_problem.expect_get_minimum().returning(|| -100f32);
+        mocked_problem.expect_get_maximum().returning(|| 100f32);
+
+        let mut evo = De::new(&Variant::Rnd,1,Strategy::Bin,20000,1000,0.8,0.9,&mocked_problem);
+
+        //test both outside
+        let vec = vec![-134.12,123.00];
+        let expected = vec![-65.88, 77.00];
+        let reflected = evo.reflect(vec);
+        let _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
+
+        //test extremely under
+        let vec = vec![-934.12,23.00];
+        let expected = vec![-65.88, 23.00];
+        let reflected = evo.reflect(vec);
+        let  _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
+
+        //test extremely over
+        let vec = vec![-34.12,1123.00];
+        let expected = vec![-34.12, 77.00];
+        let reflected = evo.reflect(vec);
+        let  _ = reflected.iter().zip(expected.iter()).map( |(reflected, expected)| assert_eq!(reflected, expected));
     }
 }

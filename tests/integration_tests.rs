@@ -203,7 +203,7 @@ mod de_rnd_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_rnd_1_bin = De::new(Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, problem);
+        let mut de_rnd_1_bin = De::new(&Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, &problem);
         de_rnd_1_bin.run();
         println!("best: {:?}", de_rnd_1_bin.get_best());
         assert!(de_rnd_1_bin.get_best().is_some());
@@ -217,7 +217,7 @@ mod de_rnd_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_rnd_1_bin = De::new(Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, problem);
+        let mut de_rnd_1_bin = De::new(&Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, &problem);
         de_rnd_1_bin.run();
         println!("best: {:?}", de_rnd_1_bin.get_best());
         assert!(de_rnd_1_bin.get_best().is_some());
@@ -238,7 +238,7 @@ mod de_best_1_bin {
             .build()
             .unwrap();
         let mut de_best_1_bin =
-            De::new(Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, problem);
+            De::new(&Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, &problem);
         de_best_1_bin.run();
         println!("best: {:?}", de_best_1_bin.get_best());
         assert!(de_best_1_bin.get_best().is_some());
@@ -253,7 +253,7 @@ mod de_best_1_bin {
             .build()
             .unwrap();
         let mut de_best_1_bin =
-            De::new(Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, problem);
+            De::new(&Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, &problem);
         de_best_1_bin.run();
         println!("best: {:?}", de_best_1_bin.get_best());
         assert!(de_best_1_bin.get_best().is_some());
@@ -261,7 +261,6 @@ mod de_best_1_bin {
     }
 }
 
-#[ignore]
 mod pso {
     use super::*;
     use heuristics::evol_arg::pso::Pso;
@@ -274,7 +273,7 @@ mod pso {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, problem);
+        let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, &problem);
         pso.run();
         println!("best: {:?}", pso.get_best());
         assert!(pso.get_best().is_some());
@@ -288,7 +287,7 @@ mod pso {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, problem);
+        let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, &problem);
         pso.run();
         println!("best: {:?}", pso.get_best());
         assert!(pso.get_best().is_some());
