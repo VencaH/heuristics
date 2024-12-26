@@ -37,6 +37,7 @@
             pkg-config
             cacert
             cargo-make
+            cargo-bump
             trunk
             fontconfig
             (rust-bin.selectLatestNightlyWith( toolchain: toolchain.default.override {
