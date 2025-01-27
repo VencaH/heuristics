@@ -9,24 +9,24 @@
     };
 
   outputs = { self, nixpkgs, rust-overlay, flake-utils, nix-filter, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+    with flake-utils.lib; eachSystem allSystems (system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-        rustHelper= pkgs.rustPlatform;
         sources = {
-          rust = nix-filter.lib {
+          test = nix-filter.lib {
             root = ./.;
             include = [
               ./Cargo.lock
+              ./test.sh
               (nix-filter.lib.inDirectory "src")
               (nix-filter.lib.inDirectory "tests")
               (nix-filter.lib.matchExt "toml")
               (nix-filter.lib.matchExt "lock")
             ];
-          };
+          }; 
         };
       in
       with pkgs;
@@ -42,16 +42,32 @@
             fontconfig
             (rust-bin.selectLatestNightlyWith( toolchain: toolchain.default.override {
               extensions= [ "rust-src" "rust-analyzer" ];
-              targets = [ "wasm32-unknown-unknown" ];
             }))
           ] ++ pkgs.lib.optionals pkg.stdenv.isDarwin [
             darwin.apple_sdk.frameworks.SystemConfiguration
           ];
 
         };
+        packages.default = self.packages.${system}.test;
         packages = {
-          default = self.packages.${system}.test;
+          test = stdenv.mkDerivation {
+              pname = "test";
+              version = "0.1.0";
+              buildInputs = [
+                openssl
+                pkg-config
+                cacert
+                cargo-make
+                trunk
+                fontconfig
+                (rust-bin.selectLatestNightlyWith( toolchain: toolchain.default.override {
+                  extensions= [ "rust-src" "rust-analyzer" ];
+                }))
+              ] ++ pkgs.lib.optionals pkg.stdenv.isDarwin [
+                darwin.apple_sdk.frameworks.SystemConfiguration
+              ];
 
+<<<<<<< Updated upstream
           test = rustHelper.buildRustPackage {
 	    buildInputs =[
 	      openssl
@@ -63,18 +79,21 @@
             ];
             pname = "heuristics";
             version = "0.1.0";
+=======
+              src = sources.test;
+              installPhase = ''
+                touch $out
+              '';
+>>>>>>> Stashed changes
 
-            src = sources.rust;
-            
-            cargoLock.lockFile  = ./Cargo.lock;
-            strictDeps = true;
-
-
-            preBuild = ''
-              cargo test
-            '';
-          };
+            };
         };
+      apps = {
+        test2 = {
+          type = "app";
+          program = "${self.packages.${system}.test}/test.sh";
+        };
+      };
       }
     );
 }

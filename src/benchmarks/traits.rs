@@ -1,6 +1,5 @@
 use std::{
-    fmt::Display,
-    marker::{self, PhantomData},
+    error::Error, fmt::Display, marker::{self, PhantomData}
 };
 
 use crate::problem_definitions::{HasLocal, HasRandom, ProblemDomain};
@@ -117,6 +116,9 @@ impl Display for BuilderError {
             ),
         }
     }
+}
+
+impl Error for BuilderError {
 }
 
 pub struct BenchmarkBuilder<T>
