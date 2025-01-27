@@ -67,9 +67,9 @@ impl Benchmark for Alpine2 {
     }
 
     fn cost_function(&self, input: &[f32]) -> f32 {
-       input
+       -1f32 * input
             .iter()
-            .map(|x| x.sin().mul(x.sqrt()))
+            .map(|x| (x.sin().mul(x.sqrt())))
             .fold(1f32, |acc, cur| acc * cur)
     }
 }

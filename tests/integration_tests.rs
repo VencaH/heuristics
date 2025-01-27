@@ -362,7 +362,7 @@ mod pso {
             .unwrap();
         let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, &problem);
         pso.run();
-        println!("best: {:?}", pso.get_best());
+        println!("alpine2 best: {:?}", pso.get_best());
         assert!(pso.get_best().is_some());
         assert_eq!(pso.get_cost_function_evaluations(), 4000);
     }
