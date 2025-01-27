@@ -1,5 +1,6 @@
 use heuristics::benchmarks::{
-    fst_dejong::FstDeJong, schwefel::Schwefel, snd_dejong::SndDeJong, traits::HasBuilder,
+    alpine2::Alpine2, fst_dejong::FstDeJong, schwefel::Schwefel, snd_dejong::SndDeJong,
+    traits::HasBuilder,
 };
 use heuristics::solvers::random_search::RandomSearch;
 
@@ -203,7 +204,16 @@ mod de_rnd_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_rnd_1_bin = De::new(&Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, &problem);
+        let mut de_rnd_1_bin = De::new(
+            &Variant::Rnd,
+            1,
+            Strategy::Bin,
+            4000,
+            10,
+            0.8,
+            0.5,
+            &problem,
+        );
         de_rnd_1_bin.run();
         println!("best: {:?}", de_rnd_1_bin.get_best());
         assert!(de_rnd_1_bin.get_best().is_some());
@@ -217,9 +227,42 @@ mod de_rnd_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_rnd_1_bin = De::new(&Variant::Rnd, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, &problem);
+        let mut de_rnd_1_bin = De::new(
+            &Variant::Rnd,
+            1,
+            Strategy::Bin,
+            4000,
+            10,
+            0.8,
+            0.9,
+            &problem,
+        );
         de_rnd_1_bin.run();
         println!("best: {:?}", de_rnd_1_bin.get_best());
+        assert!(de_rnd_1_bin.get_best().is_some());
+        assert_eq!(de_rnd_1_bin.get_cost_function_evaluations(), 4000);
+    }
+    
+    #[test]
+    fn apline2() {
+        let problem = Alpine2::builder()
+            .minimum(0f32)
+            .maximum(100f32)
+            .dimensions(2usize)
+            .build()
+            .unwrap();
+        let mut de_rnd_1_bin = De::new(
+            &Variant::Rnd,
+            1,
+            Strategy::Bin,
+            4000,
+            10,
+            0.8,
+            0.9,
+            &problem,
+        );
+        de_rnd_1_bin.run();
+        println!("alpin2 best: {:?}", de_rnd_1_bin.get_best());
         assert!(de_rnd_1_bin.get_best().is_some());
         assert_eq!(de_rnd_1_bin.get_cost_function_evaluations(), 4000);
     }
@@ -237,8 +280,16 @@ mod de_best_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_best_1_bin =
-            De::new(&Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.5, &problem);
+        let mut de_best_1_bin = De::new(
+            &Variant::Best,
+            1,
+            Strategy::Bin,
+            4000,
+            10,
+            0.8,
+            0.5,
+            &problem,
+        );
         de_best_1_bin.run();
         println!("best: {:?}", de_best_1_bin.get_best());
         assert!(de_best_1_bin.get_best().is_some());
@@ -252,8 +303,16 @@ mod de_best_1_bin {
             .dimensions(20usize)
             .build()
             .unwrap();
-        let mut de_best_1_bin =
-            De::new(&Variant::Best, 1, Strategy::Bin, 4000, 10, 0.8, 0.9, &problem);
+        let mut de_best_1_bin = De::new(
+            &Variant::Best,
+            1,
+            Strategy::Bin,
+            4000,
+            10,
+            0.8,
+            0.9,
+            &problem,
+        );
         de_best_1_bin.run();
         println!("best: {:?}", de_best_1_bin.get_best());
         assert!(de_best_1_bin.get_best().is_some());
@@ -285,6 +344,20 @@ mod pso {
             .minimum(-100f32)
             .maximum(100f32)
             .dimensions(20usize)
+            .build()
+            .unwrap();
+        let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, &problem);
+        pso.run();
+        println!("best: {:?}", pso.get_best());
+        assert!(pso.get_best().is_some());
+        assert_eq!(pso.get_cost_function_evaluations(), 4000);
+    }
+    #[test]
+    fn apline2() {
+        let problem = Alpine2::builder()
+            .minimum(0f32)
+            .maximum(100f32)
+            .dimensions(2usize)
             .build()
             .unwrap();
         let mut pso = Pso::new(4000, 10, 0.5, 0.8, 0.9, &problem);

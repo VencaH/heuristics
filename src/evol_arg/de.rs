@@ -1,5 +1,6 @@
 use crate::problem_definitions::{HasRandom, ProblemDomain};
 use rand::seq::SliceRandom;
+use decorum::cmp::CanonicalOrd;
 
 pub enum Variant {
     Rnd,
@@ -124,7 +125,7 @@ where
     fn get_current_gen_best(&self) -> Member<T> {
         self.get_current_generation()
             .iter()
-            .max_by(|a, b| a.cost.partial_cmp(&b.cost).unwrap())
+            .max_by(|a, b| a.cost.cmp_canonical(&b.cost))
             .unwrap()
             .clone()
     }

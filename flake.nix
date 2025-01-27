@@ -48,52 +48,6 @@
           ];
 
         };
-        packages.default = self.packages.${system}.test;
-        packages = {
-          test = stdenv.mkDerivation {
-              pname = "test";
-              version = "0.1.0";
-              buildInputs = [
-                openssl
-                pkg-config
-                cacert
-                cargo-make
-                trunk
-                fontconfig
-                (rust-bin.selectLatestNightlyWith( toolchain: toolchain.default.override {
-                  extensions= [ "rust-src" "rust-analyzer" ];
-                }))
-              ] ++ pkgs.lib.optionals pkg.stdenv.isDarwin [
-                darwin.apple_sdk.frameworks.SystemConfiguration
-              ];
-
-<<<<<<< Updated upstream
-          test = rustHelper.buildRustPackage {
-	    buildInputs =[
-	      openssl
-	      pkg-config
-	      cacert
-	      cargo-make
-	      trunk
-	      fontconfig
-            ];
-            pname = "heuristics";
-            version = "0.1.0";
-=======
-              src = sources.test;
-              installPhase = ''
-                touch $out
-              '';
->>>>>>> Stashed changes
-
-            };
-        };
-      apps = {
-        test2 = {
-          type = "app";
-          program = "${self.packages.${system}.test}/test.sh";
-        };
-      };
       }
     );
 }

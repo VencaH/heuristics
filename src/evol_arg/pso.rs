@@ -1,5 +1,6 @@
 use crate::problem_definitions::{HasRandom, ProblemDomain};
-use rand::{random, seq::SliceRandom};
+use rand::random;
+use decorum::cmp::CanonicalOrd;
 #[derive(Debug)]
 pub struct Particle<T>
 where
@@ -27,6 +28,16 @@ where
             velocity: self.velocity.clone(),
         }
     }
+}
+
+impl<T> std::fmt::Display for Particle<T> 
+where
+    T: ProblemDomain<Item = f32> + HasRandom,
+{
+   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+       write!(f, "cost: {}, best_coords: {}, best_cost: {}, coordinates: {}",self.current_cost, self.best_coords, self.best_cost, self.current_coordinates)
+        
+    } 
 }
 
 impl<T> Particle<T>
@@ -144,10 +155,12 @@ where
     }
 
     fn get_current_gen_best(&self) -> (f32, Vec<T::Item>) {
+        //print!("gen_0: [");
+        //println!("]");
         let best = self
             .get_particles()
             .iter()
-            .max_by(|a, b| a.current_cost.partial_cmp(&b.current_cost).unwrap())
+            .max_by(|a, b| a.current_cost.cmp_canonical(&b.current_cost))
             .unwrap();
         (
             best.current_cost,

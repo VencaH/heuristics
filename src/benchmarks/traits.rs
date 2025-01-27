@@ -145,7 +145,7 @@ impl<T> BenchmarkBuilder<T>
 where
     T: Benchmark + Default,
 {
-    pub fn minimum(&mut self, minimum: f32) -> &mut Self {
+    pub  fn minimum(&mut self, minimum: f32) -> &mut Self {
         self.min = Some(minimum);
         self
     }

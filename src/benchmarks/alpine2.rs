@@ -94,9 +94,9 @@ mod test {
     #[test]
     fn random() {
         let alpine2 = Alpine2::builder()
-            .minimum(-500f32)
-            .maximum(500f32)
-            .dimensions(5usize)
+            .minimum(-100f32)
+            .maximum(100f32)
+            .dimensions(2usize)
             .build()
             .unwrap();
         let random_1 = alpine2.get_random();
