@@ -160,7 +160,7 @@ where
         let best = self
             .get_particles()
             .iter()
-            .max_by(|a, b| a.current_cost.cmp_canonical(&b.current_cost))
+            .min_by(|a, b| a.current_cost.cmp_canonical(&b.current_cost))
             .unwrap();
         (
             best.current_cost,

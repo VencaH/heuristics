@@ -125,7 +125,7 @@ where
     fn get_current_gen_best(&self) -> Member<T> {
         self.get_current_generation()
             .iter()
-            .max_by(|a, b| a.cost.cmp_canonical(&b.cost))
+            .min_by(|a, b| a.cost.cmp_canonical(&b.cost))
             .unwrap()
             .clone()
     }
