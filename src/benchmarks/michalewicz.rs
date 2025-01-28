@@ -74,7 +74,6 @@ impl Benchmark for Michalewicz {
     }
 
     fn cost_function(&self, input: &[f32]) -> f32 {
-        println!("inputs: {:?}", input);
         let result =-input
             .iter()
             .enumerate()
@@ -90,7 +89,6 @@ impl Benchmark for Michalewicz {
                         )
             })
             .sum::<f32>();
-        println!("{result}");
         result
     }
 }
