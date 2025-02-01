@@ -1,5 +1,5 @@
 use crate::problem_definitions::{HasRandom, ProblemDomain};
-use rand::seq::SliceRandom;
+use rand::seq::{IndexedRandom, SliceRandom};
 use decorum::cmp::CanonicalOrd;
 
 pub enum Variant {
@@ -191,7 +191,7 @@ where
             .filter(|(a, _)| *a != index)
             .map(|(_, member)| member.to_owned())
             .collect::<Vec<Member<T>>>();
-        let mut selected_vectors = current_gen.choose_multiple(&mut rand::thread_rng(), 3);
+        let mut selected_vectors = current_gen.choose_multiple(&mut rand::rng(), 3);
 
         let trial_vector = self.reflect(selected_vectors
             .next()
@@ -256,7 +256,7 @@ mod test {
     use super::*;
     use mockall::predicate::*;
     use mockall::*;
-    use rand::distributions::Uniform;
+    use rand::distr::Uniform;
     use rand_distr::Distribution;
     use approx::relative_eq;
 
@@ -290,8 +290,8 @@ mod test {
             .expect_cost_function()
             .times(expected_calls)
             .returning(|_| {
-                let range = Uniform::new_inclusive(0f32, 15000f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample(&mut rng)
             });
 

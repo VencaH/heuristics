@@ -69,7 +69,8 @@ where
                 1
             } else {
                 let probability = 1f32 / E.powf(difference / self.current_temp);
-                let roll = Uniform::new(0f32, 1f32).sample(&mut (rand::thread_rng()));
+                //Todo: remove unwrap here 
+                let roll = Uniform::new(0f32, 1f32).unwrap().sample(&mut (rand::thread_rng()));
                 if roll < probability {
                     1
                 } else {
@@ -95,7 +96,7 @@ mod test {
     use super::*;
     use mockall::predicate::*;
     use mockall::*;
-    use rand::distributions::Uniform;
+    use rand::distr::Uniform;
     use rand_distr::Distribution;
 
     mock! {
@@ -122,21 +123,21 @@ mod test {
     fn run() {
         let mut mocked_problem = MockMockProblem::new();
         mocked_problem.expect_get_random().returning(|| {
-            let range = Uniform::new_inclusive(-500f32, 500f32);
-            let mut rng = rand::thread_rng();
+            let range = Uniform::new_inclusive(-500f32, 500f32).unwrap();
+            let mut rng = rand::rng();
             range.sample_iter(&mut rng).take(5).collect()
         });
         mocked_problem
             .expect_get_local_next()
             .times(10..)
             .returning(|_| {
-                let range = Uniform::new_inclusive(-500f32, 500f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(-500f32, 500f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample_iter(&mut rng).take(5).collect()
             });
         mocked_problem.expect_cost_function().returning(|_| {
-            let range = Uniform::new_inclusive(0f32, 15000f32);
-            let mut rng = rand::thread_rng();
+            let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+            let mut rng = rand::rng();
             let ret = range.sample(&mut rng);
             ret
         });

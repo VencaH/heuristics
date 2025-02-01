@@ -259,7 +259,7 @@ mod test {
     use super::*;
     use mockall::predicate::*;
     use mockall::*;
-    use rand::distributions::Uniform;
+    use rand::distr::Uniform;
     use rand_distr::Distribution;
 
     mock! {
@@ -292,8 +292,8 @@ mod test {
             .expect_cost_function()
             .times(expected_calls)
             .returning(|_| {
-                let range = Uniform::new_inclusive(0f32, 15000f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample(&mut rng)
             });
 

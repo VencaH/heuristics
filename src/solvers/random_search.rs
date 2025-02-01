@@ -65,7 +65,7 @@ mod test {
     use super::*;
     use mockall::predicate::*;
     use mockall::*;
-    use rand::distributions::Uniform;
+    use rand::distr::Uniform;
     use rand_distr::Distribution;
 
     mock! {
@@ -90,16 +90,16 @@ mod test {
             .expect_get_random()
             .times(1000)
             .returning(|| {
-                let range = Uniform::new_inclusive(-500f32, 500f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(-500f32, 500f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample_iter(&mut rng).take(5).collect()
             });
         mocked_problem
             .expect_cost_function()
             .times(1000)
             .returning(|_| {
-                let range = Uniform::new_inclusive(0f32, 15000f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample(&mut rng)
             });
         let mut random_search = RandomSearch::new(1000, mocked_problem);
@@ -109,8 +109,8 @@ mod test {
 
     #[test]
     fn get_0() {
-        let range = Uniform::new(1usize, 1000usize);
-        let fst_part = range.sample(&mut (rand::thread_rng()));
+        let range = Uniform::new(1usize, 1000usize).unwrap();
+        let fst_part = range.sample(&mut (rand::rng()));
         let snd_part = 1000 - fst_part - 1;
         let mut seq_rnd = Sequence::new();
         let mut seq_cf = Sequence::new();
@@ -122,8 +122,8 @@ mod test {
             .times(fst_part)
             .in_sequence(&mut seq_rnd)
             .returning(|| {
-                let range = Uniform::new_inclusive(-500f32, 500f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(-500f32, 500f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample_iter(&mut rng).take(5).collect()
             });
         mocked_problem
@@ -131,8 +131,8 @@ mod test {
             .times(fst_part)
             .in_sequence(&mut seq_cf)
             .returning(|_| {
-                let range = Uniform::new_inclusive(0f32, 15000f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample(&mut rng)
             });
 
@@ -154,8 +154,9 @@ mod test {
             .times(snd_part)
             .in_sequence(&mut seq_rnd)
             .returning(|| {
-                let range = Uniform::new_inclusive(-500f32, 500f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(-500f32, 500f32).unwrap()
+                    ;
+                let mut rng = rand::rng();
                 range.sample_iter(&mut rng).take(5).collect()
             });
         mocked_problem
@@ -163,8 +164,8 @@ mod test {
             .times(snd_part)
             .in_sequence(&mut seq_cf)
             .returning(|_| {
-                let range = Uniform::new_inclusive(0f32, 15000f32);
-                let mut rng = rand::thread_rng();
+                let range = Uniform::new_inclusive(0f32, 15000f32).unwrap();
+                let mut rng = rand::rng();
                 range.sample(&mut rng)
             });
         let mut random_search = RandomSearch::new(1000, mocked_problem);

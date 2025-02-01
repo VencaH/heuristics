@@ -1,9 +1,11 @@
 use std::{
-    error::Error, fmt::Display, marker::{self, PhantomData}
+    error::Error,
+    fmt::Display,
+    marker::{self, PhantomData},
 };
 
 use crate::problem_definitions::{HasLocal, HasRandom, ProblemDomain};
-use rand::distributions::{Distribution, Uniform};
+use rand::distr::{Distribution, Uniform};
 use rand_distr::Normal;
 
 pub trait Benchmark {
@@ -51,7 +53,8 @@ where
     T: Benchmark,
 {
     fn get_random(&self) -> Vec<<Self as ProblemDomain>::Item> {
-        let range = Uniform::new_inclusive(self.get_min(), self.get_max());
+        //Todo: remove the unwrap here
+        let range = Uniform::new_inclusive(self.get_min(), self.get_max()).unwrap();
         let mut rng = rand::thread_rng();
         range.sample_iter(&mut rng).take(self.get_dim()).collect()
     }
@@ -118,8 +121,7 @@ impl Display for BuilderError {
     }
 }
 
-impl Error for BuilderError {
-}
+impl Error for BuilderError {}
 
 pub struct BenchmarkBuilder<T>
 where
@@ -145,7 +147,7 @@ impl<T> BenchmarkBuilder<T>
 where
     T: Benchmark + Default,
 {
-    pub  fn minimum(&mut self, minimum: f32) -> &mut Self {
+    pub fn minimum(&mut self, minimum: f32) -> &mut Self {
         self.min = Some(minimum);
         self
     }
