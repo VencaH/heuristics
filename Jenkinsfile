@@ -16,6 +16,10 @@ pipeline {
         stage('Get tests') {
             steps{
                     script {
+                        nixshell = sh(script: "nix develop", returnStdout: false)
+                    }
+
+                    script {
                     tests = sh(script: "cargo test -q -- --list", returnStdout: true ).tokenize("\n")
                     echo "Tests: ${tests}"
                     }
@@ -35,8 +39,12 @@ pipeline {
                         }
                     }
                 }
-                
             }
+        }
+    }
+    post {
+        always {
+            sh 'nix-store --gc'
         }
     }
 }
