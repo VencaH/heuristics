@@ -1,21 +1,42 @@
+def tests = [:]
+def test_name = "";
+
 pipeline {
     agent any
+
+
     stages {
         stage('Git Checkout') {
-            steps {
+             steps {
                 script {
                     checkout scm
                 }
             }
         }
-
-        stage('Test code') {
+        stage('Get tests') {
             steps{
-                script {
-                    def tests = sh(script: "nix run ./#test", returnStdout: true ).tokenize("\n").findAll{line -> (line =~ /error$|result:/)}
-                    tests.each { test -> echo "Tests: ${test}" }
-                }
+                    script {
+                    tests = sh(script: "cargo test -q -- --list", returnStdout: true ).tokenize("\n")
+                    echo "Tests: ${tests}"
+                    }
             }
-        }   
+        }
+        
+        stage('Run tests') {
+            steps {
+                script {
+                    tests.each { test_text ->
+                        test_name = test_text.split(": ")[0]
+                        stage("Run test ${test_name}") {
+                            script {
+                                def test_result = sh(script: "cargo test ${test_name} -q -- --exact", returnStdout: true)
+                                echo "Test result: ${test_result}"
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
     }
 }
