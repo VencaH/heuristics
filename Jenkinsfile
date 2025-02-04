@@ -16,11 +16,7 @@ pipeline {
         stage('Get tests') {
             steps{
                     script {
-                        nixshell = sh(script: "nix develop", returnStdout: false)
-                    }
-
-                    script {
-                    tests = sh(script: "cargo test -q -- --list", returnStdout: true ).tokenize("\n")
+                    tests = sh(script: 'nix develop --command bash -c "cargo test -q -- --list"', returnStdout: true ).tokenize("\n")
                     echo "Tests: ${tests}"
                     }
             }
@@ -33,7 +29,7 @@ pipeline {
                         test_name = test_text.split(": ")[0]
                         stage("Run test ${test_name}") {
                             script {
-                                def test_result = sh(script: "cargo test ${test_name} -q -- --exact", returnStdout: true)
+                                def test_result = sh(script:"nix develop --command bash -c \"cargo test ${test_name} -q -- --exact\"", returnStdout: true)
                                 echo "Test result: ${test_result}"
                             }
                         }
